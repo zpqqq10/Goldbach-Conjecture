@@ -2,7 +2,8 @@
 import os
 import wget
 from utils import *
-# import rarfile
+import rarfile
+# sudo apt install unrar
 
 # ------------
 # 构建索引/VSM
@@ -82,7 +83,8 @@ if __name__ == "__main__":
             print('Downloading Reuters...')
             wget.download('http://10.76.3.31/Reuters.rar', os.getcwd())
             print('\n')
-        # TODO: extract automatically
-        print(RED+'Please extract Reuters.rar to Reuters and then restart the program!'+WHITE_)
-    else:
-        main()
+        print('Extracting Reuters...')
+        z = rarfile.RarFile(os.path.join(os.getcwd(), 'Reuters.rar'))
+        z.extractall()
+        z.close()
+    main()
