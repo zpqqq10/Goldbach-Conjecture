@@ -2,7 +2,7 @@
 import os
 import wget
 from utils import *
-import rarfile
+# import rarfile
 
 # ------------
 # 构建索引/VSM
@@ -77,11 +77,12 @@ def main():
 
 if __name__ == "__main__":
     # check files
-    if(os.path.exists('Reuters')):
-        print('Downloading Reuters...')
-        wget.download('http://10.76.3.31/Reuters.rar', os.getcwd())
+    if not os.path.exists('Reuters'):
+        if not os.path.exists('Reuters.rar'): 
+            print('Downloading Reuters...')
+            wget.download('http://10.76.3.31/Reuters.rar', os.getcwd())
+            print('\n')
         # TODO: extract automatically
-        print(
-            RED+'Please extract Reuters.rar to Reuters and then restart the program!'+WHITE_)
+        print(RED+'Please extract Reuters.rar to Reuters and then restart the program!'+WHITE_)
     else:
         main()
