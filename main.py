@@ -1,33 +1,13 @@
 # !/usr/bin/env python
+
 import os
+from tqdm import tqdm
 import wget
 from utils import *
 import rarfile
+import InvertedIndex
 # sudo apt install unrar
 
-# ------------
-# 构建索引/VSM
-# ------------
-# 跑一遍来构建文件，第二遍就可以注释掉了
-# print('Creating Index...')
-# # 构建倒排索引和每篇文档的词数
-# index, doc_size = InvertedIndex.create_index()
-# # 用倒排索引生成词表
-# print('Creating Wordlist...')
-# wordlist = InvertedIndex.get_wordlist(index)
-# # 生成 VSM
-# print('Creating VSM...')
-# VSM = InvertedIndex.create_VSM(index, doc_size, wordlist)
-# # # 为 Top K 暴力查表做计算
-# VSM_sum = InvertedIndex.VSM_sum(VSM)
-# # # 将文件存档
-# # print('Saving Files...')
-# # utils.write_to_file(index, utils.ppath+'index.json')
-# # utils.write_to_file(wordlist, utils.ppath+'wordlist.json')
-# # utils.write_to_file(doc_size, utils.ppath+'doc_size.json')
-# # utils.write_to_file(VSM, utils.ppath+'VSM.json')
-# utils.write_to_file(VSM_sum, utils.ppath+'VSM_sum.json')
-#
 # 从 JSON 读取数据， JSON 文件默认放在 IRProject 下
 # print('Getting Data from Files...')
 # index = utils.get_from_file('index')
@@ -44,6 +24,8 @@ prompt = '''Please select the query mode:
 0.quit
 > '''
 # main function, a loop
+
+
 def main():
     while True:
         print("\n"+"*"*50)
@@ -78,13 +60,28 @@ def main():
 
 if __name__ == "__main__":
     # check files
-    if not os.path.exists('Reuters'):
-        if not os.path.exists('Reuters.rar'): 
-            print('Downloading Reuters...')
-            wget.download('http://10.76.3.31/Reuters.rar', os.getcwd())
-            print('\n')
-        print('Extracting Reuters...')
-        z = rarfile.RarFile(os.path.join(os.getcwd(), 'Reuters.rar'))
-        z.extractall()
-        z.close()
+    if not os.path.exists('jsons'):
+        # create a dir
+        os.mkdir('jsons')
+    if os.path.exists('jsons'):
+        if os.path.isfile('jsons'):
+            # create a dir
+            raise Exception('Please make sure there is no file named jsons!')
+        if not os.path.exists(os.path.join('jsons', 'InvertedIndex.json')) or \
+           not os.path.exists(os.path.join('jsons', 'Dictionary.json')) or \
+           not os.path.exists(os.path.join('jsons', 'VSM.json')):
+            if not os.path.exists('Reuters'):
+                if not os.path.exists('Reuters.rar'):
+                    print('Downloading Reuters...')
+                    wget.download('http://10.76.3.31/Reuters.rar', os.getcwd())
+                    print('\n')
+                print('Extracting Reuters...')
+                z = rarfile.RarFile(os.path.join(os.getcwd(), 'Reuters.rar'))
+                for f in tqdm(z.namelist()): 
+                    z.extract(f)
+                z.close()
+                print(GREEN+'Extraction is successfully done!'+WHITE_)
+            index, doc_sizes = InvertedIndex.build_Iindex()
+            InvertedIndex.build_VSM(index, doc_sizes)
+
     main()

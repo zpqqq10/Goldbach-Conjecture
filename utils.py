@@ -24,15 +24,13 @@ CLEAR = '\033[1;1H\033[2J'
 # 非 Linux 环境下记得自己改路径
 # ppath = os.getcwd()+'/'
 # rpath = ppath + '/Reuters/'
-# # 语料数量是常数 by 文件夹下文件数量
-# D = 10788
 
-# # 将数据写入文件
-# def write_to_file(data, filename):
-#     file = open(filename, 'w')
-#     str = json.JSONEncoder().encode(data)
-#     file.write(str)
-#     file.close()
+# write data to a json
+def write_to_json(data, file):
+    f = open(file, 'w')
+    str = json.JSONEncoder().encode(data)
+    f.write(str)
+    f.close()
 
 # # 获取语料库的所有文件列表
 # def get_doc_list():
@@ -42,41 +40,39 @@ CLEAR = '\033[1;1H\033[2J'
 #         filelist.append(get_doc_ID(file))
 #     return sorted(filelist)
 
-# # 从文档名中截取文档 ID
-# def get_doc_ID(filename):
-#     docID = os.path.splitext(filename)[0]
-#     return int(docID)
+# 从文档名中截取文档 ID
+def get_doc_ID(file):
+    id = os.path.splitext(file)[0]
+    return int(id)
 
-# # 处理语料库文档的内容
-# def process_doc_content(filename):
-#     # 处理 ASCII 格式的语料
-#     with open(filename, 'r', encoding='ISO-8859-1') as file:
-#         content = file.read()
-#     res = []
-#     result = []
-#     # 标点符号和数字
-#     punc_digit = [',', '.', ';', ':', '&', '>', "'", '"', '`', '+',
-#                   '*', '?', '!', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
-#     for word in word_tokenize(content):
-#         # 转换为小写
-#         word = word.lower()
-#         # 处理标点符号
-#         for c in punc_digit:
-#             word = word.replace(c, '')
-#         # 处理空字符串
-#         if len(word) == 0 or word[0] == '-':
-#             continue
-#         # 处理 's
-#         if word[0] == '\'':
-#             continue
-#         # 处理 March/April 中的 / ：分成两个单词
-#         if word.find('/') > 0:
-#             res = word.split('/')
-#             for w in res:
-#                 result.append(w)
-#             continue
-#         result.append(word)
-#     return result
+# 处理语料库文档的内容
+def process_doc_content(file):
+    # 处理 ASCII 格式的语料
+    with open(file, 'r', encoding='ISO-8859-1') as f:
+        content = f.read()
+    res = []
+    result = []
+    # 标点符号和数字
+    punc_digit = [',', '.', ';', ':', '&', '>', "'", '"', '`', '+', '(', ')', '[', ']', '{', '}',
+                  '*', '?', '!', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
+    for word in word_tokenize(content):
+        # 转换为小写
+        word = word.lower()
+        # 处理标点符号并忽略's
+        for c in punc_digit:
+            if word != "'s": 
+                word = word.replace(c, '')
+        # 处理空字符串
+        if len(word) == 0 or word[0] == '-':
+            continue
+        # 处理 March/April 中的 / ：分成两个单词
+        if word.find('/') > 0:
+            res = word.split('/')
+            for w in res:
+                result.append(w)
+            continue
+        result.append(word)
+    return result
 
 # # 从 JSON 中读取倒排索引/词表
 # def get_from_file(filename):
@@ -124,3 +120,6 @@ CLEAR = '\033[1;1H\033[2J'
 #         for word in highlights:
 #             text = text.replace(word, "\033[1;31;40m" + word + "\033[0m")
 #         print(text)
+
+if __name__ == "__main__":
+    print(process_doc_content('t.html'))
