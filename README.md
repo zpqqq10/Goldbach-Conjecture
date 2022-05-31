@@ -30,3 +30,19 @@ Packages:
 **为了方便pull和push，我设置忽略掉了一些内容(见.gitignore)**
 
 **为了方便调试，大家可以手动保留Reuters中的1-45共25个文档，并修改InvertedIndex.py中的DOCS为25**
+
+
+
+2022.5.31. kyq
+
+布尔检索好了x
+
+目前没发现问题x
+
+可以使用 AND/OR/NOT/AND NOT/OR NOT/括号
+
+AND/OR/AND NOT/ OR NOT不能出现在句首，NOT可以
+
+以上都不能出现在句尾
+
+单词和单词不能连续出现x
