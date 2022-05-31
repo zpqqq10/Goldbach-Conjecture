@@ -8,8 +8,9 @@ def controller(query):
     query = query.replace('OR','')
     query = query.replace('(','')
     query = query.replace(')','')
-    query = query.replace('  ',' ')
-    query = query.replace('  ',' ')
+    query = query.strip(' ')
+    while(query.find('  ') >= 0):
+        query = query.replace('  ',' ')
     word_list = []
     word_list = query.split(' ')
     # print(word_list)
