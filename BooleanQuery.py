@@ -1,7 +1,7 @@
 import utils
 
 
-def controller(query):
+def handler(query):
     result = bool_query(query)
     query = query.replace('NOT','')
     query = query.replace('AND','')
@@ -15,7 +15,7 @@ def controller(query):
     word_list = query.split(' ')
     # print(word_list)
     # print(result)
-    utils.printtext(word_list,result)
+    utils.print_result(word_list, result, 'Boolean Query')
 
 
 def bool_query(query):
@@ -23,7 +23,7 @@ def bool_query(query):
     while(query.find('  ') >= 0):
         query = query.replace('  ',' ')
     query_len = len(query)
-    all_doc = utils.get_doc_list()
+    all_doc = utils.get_all_doc()
 
     isAnd = False
     isOr = False
@@ -42,26 +42,26 @@ def bool_query(query):
         if(query[i] == 'A'):  # AND
             if(i + 2 < query_len and query[i + 1] == 'N' and query[i + 2] == 'D'):
                 if(i == 0):
-                    print("Bad Query! Meet AND at first!")
+                    print('Bad Query! Meet AND at first!')
                     return []
                 elif(i + 2 == query_len - 1):
-                    print("Bad Query! Meet AND at the tail!")
+                    print('Bad Query! Meet AND at the tail!')
                 elif(query[i - 1] == ' ' and query[i + 3] == ' '):
-                    # like -> " AND "
+                    # like -> ' AND '
                     if(isOr):
-                        print("Bad Query! Meet AND after OR!")
+                        print('Bad Query! Meet AND after OR!')
                         return []
                     elif(isNot):
-                        print("Bad Query! Meet AND after NOT!")
+                        print('Bad Query! Meet AND after NOT!')
                         return []
                     elif(isAnd):
-                        print("Bad Query! Meet AND after AND!")
+                        print('Bad Query! Meet AND after AND!')
                         return []
                     elif(isAndNot):
-                        print("Bad Query! Meet AND after AND_NOT!")
+                        print('Bad Query! Meet AND after AND_NOT!')
                         return []
                     elif(isOrNot):
-                        print("Bad Query! Meet AND after OR_NOT!")
+                        print('Bad Query! Meet AND after OR_NOT!')
                         return []
                     else:
                         isAnd = True
@@ -76,26 +76,26 @@ def bool_query(query):
         elif(query[i] == 'O'):  # OR
             if(i + 1 < query_len and query[i + 1] == 'R'):
                 if(i == 0):
-                    print("Bad Query! Meet OR at first!")
+                    print('Bad Query! Meet OR at first!')
                     return []
                 elif(i + 1 == query_len - 1):
-                    print("Bad Query! Meet OR at the tail!")
+                    print('Bad Query! Meet OR at the tail!')
                 elif(query[i - 1] == ' ' and query[i + 2] == ' '):
-                    # like -> " OR "
+                    # like -> ' OR '
                     if(isOr):
-                        print("Bad Query! Meet OR after OR!")
+                        print('Bad Query! Meet OR after OR!')
                         return []
                     elif(isNot):
-                        print("Bad Query! Meet OR after NOT!")
+                        print('Bad Query! Meet OR after NOT!')
                         return []
                     elif(isAnd):
-                        print("Bad Query! Meet OR after AND!")
+                        print('Bad Query! Meet OR after AND!')
                         return []
                     elif(isAndNot):
-                        print("Bad Query! Meet OR after AND_NOT!")
+                        print('Bad Query! Meet OR after AND_NOT!')
                         return []
                     elif(isOrNot):
-                        print("Bad Query! Meet OR after OR_NOT!")
+                        print('Bad Query! Meet OR after OR_NOT!')
                         return []
                     else:
                         isOr = True
@@ -110,10 +110,10 @@ def bool_query(query):
         elif(query[i] == 'N'):
             if(i + 2 < query_len and query[i + 1] == 'O' and query[i + 2] == 'T'):
                 if(i + 2 == query_len - 1):
-                    print("Bad Query! Meet NOT at the tail!")
+                    print('Bad Query! Meet NOT at the tail!')
                 elif(i == 0):
                     if(query[i + 3] == ' '):
-                        # "NOT "
+                        # 'NOT '
                         isNot = True
                         isHeadNot = True
                         isWord = False
@@ -122,27 +122,27 @@ def bool_query(query):
                         cur_word = cur_word + query[i]
                         i = i + 1
                 elif(query[i - 1] == ' ' and query[i + 3] == ' '):
-                    # like -> " NOT "
+                    # like -> ' NOT '
                     if(isOr):
-                        # like -> " OR NOT "
+                        # like -> ' OR NOT '
                         isOr = False
                         isOrNot = True
                         isWord = False
                         i = i + 4
                     elif(isNot):
-                        print("Bad Query! Meet NOT after NOT!")
+                        print('Bad Query! Meet NOT after NOT!')
                         return []
                     elif(isAnd):
-                        # like -> " AND NOT "
+                        # like -> ' AND NOT '
                         isAnd = False
                         isAndNot = True
                         isWord = False
                         i = i + 4
                     elif(isAndNot):
-                        print("Bad Query! Meet NOT after AND_NOT!")
+                        print('Bad Query! Meet NOT after AND_NOT!')
                         return []
                     elif(isOrNot):
-                        print("Bad Query! Meet NOT after OR_NOT!")
+                        print('Bad Query! Meet NOT after OR_NOT!')
                         return []
                     else:
                         isNot = True
@@ -158,19 +158,19 @@ def bool_query(query):
             if(cur_word != ''):
                 cur_word = cur_word.lower()
                 if(isAnd):
-                    result_add = utils.loadIndex(cur_word)
+                    result_add = utils.load_index(cur_word)
                     result_cur = build_and(result_cur, result_add)
                     isAnd = False
                     cur_word = ''
                     isWord = True
                 elif(isOr):
-                    result_add = utils.loadIndex(cur_word)
+                    result_add = utils.load_index(cur_word)
                     result_cur = build_or(result_cur, result_add)
                     isOr = False
                     cur_word = ''
                     isWord = True
                 elif(isNot):
-                    result_add = utils.loadIndex(cur_word)
+                    result_add = utils.load_index(cur_word)
                     result_add = build_not(result_add, all_doc)
                     if(isHeadNot):
                         result_cur = result_add
@@ -181,14 +181,14 @@ def bool_query(query):
                     cur_word = ''
                     isWord = True
                 elif(isAndNot):
-                    result_add = utils.loadIndex(cur_word)
+                    result_add = utils.load_index(cur_word)
                     result_add = build_not(result_add, all_doc)
                     result_cur = build_and(result_cur, result_add)
                     isAndNot = False
                     cur_word = ''
                     isWord = True
                 elif(isOrNot):
-                    result_add = utils.loadIndex(cur_word)
+                    result_add = utils.load_index(cur_word)
                     result_add = build_not(result_add, all_doc)
                     result_cur = build_or(result_cur, result_add)
                     isOrNot = False
@@ -199,7 +199,7 @@ def bool_query(query):
                         print('Bad Query! There should be no consecutive words!')
                         return []
                     else:
-                        result_cur = utils.loadIndex(cur_word)
+                        result_cur = utils.load_index(cur_word)
                         cur_word = ''
                         isWord = True
             i = i + 1
@@ -284,19 +284,19 @@ def bool_query(query):
     if(cur_word != ''):
         cur_word = cur_word.lower()
         if(isAnd):
-            result_add = utils.loadIndex(cur_word)
+            result_add = utils.load_index(cur_word)
             result_cur = build_and(result_cur, result_add)
             isAnd = False
             cur_word = ''
             isWord = True
         elif(isOr):
-            result_add = utils.loadIndex(cur_word)
+            result_add = utils.load_index(cur_word)
             result_cur = build_or(result_cur, result_add)
             isOr = False
             cur_word = ''
             isWord = True
         elif(isNot):
-            result_add = utils.loadIndex(cur_word)
+            result_add = utils.load_index(cur_word)
             result_add = build_not(result_add, all_doc)
             if(isHeadNot):
                 result_cur = result_add
@@ -307,14 +307,14 @@ def bool_query(query):
             cur_word = ''
             isWord = True
         elif(isAndNot):
-            result_add = utils.loadIndex(cur_word)
+            result_add = utils.load_index(cur_word)
             result_add = build_not(result_add, all_doc)
             result_cur = build_and(result_cur, result_add)
             isAndNot = False
             cur_word = ''
             isWord = True
         elif(isOrNot):
-            result_add = utils.loadIndex(cur_word)
+            result_add = utils.load_index(cur_word)
             result_add = build_not(result_add, all_doc)
             result_cur = build_or(result_cur, result_add)
             isOrNot = False
@@ -325,7 +325,7 @@ def bool_query(query):
                 print('Bad Query! There should be no consecutive words!')
                 return []
             else:
-                result_cur = utils.loadIndex(cur_word)
+                result_cur = utils.load_index(cur_word)
                 cur_word = ''
                 isWord = True
     return result_cur

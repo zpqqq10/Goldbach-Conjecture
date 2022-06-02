@@ -1,9 +1,6 @@
 import os
 import json
 from nltk import word_tokenize
-import chardet
-import tokenize
-import html
 
 CANCEL = '\033[0m'
 RED = '\033[1;31m'
@@ -21,24 +18,20 @@ CLEAR = '\033[1;1H\033[2J'
 # - nltk 词干还原
 # - 优化词表过滤规则
 
-# 非 Linux 环境下记得自己改路径
-# ppath = os.getcwd()+'/'
-# rpath = ppath + '/Reuters/'
+# 10788 documents and 32333 indexes in total!
 
 # write data to a json
 def write_to_json(data, file):
-    f = open(file, 'w')
-    str = json.JSONEncoder().encode(data)
-    f.write(str)
-    f.close()
+    with open(file, 'w', encoding='utf-8') as f:
+        json.dump(data, f) 
 
-# # 获取语料库的所有文件列表
-# def get_doc_list():
-#     filelist = []
-#     files = os.listdir('./Reuters/')
-#     for file in files:
-#         filelist.append(get_doc_ID(file))
-#     return sorted(filelist)
+# 获取语料库的所有文件列表, 返回形式[1, 3, 9, ...]
+def get_all_doc():
+    filelist = []
+    files = os.listdir('./Reuters/')
+    for file in files:
+        filelist.append(get_doc_ID(file))
+    return sorted(filelist)
 
 # 从文档名中截取文档 ID
 def get_doc_ID(file):
@@ -74,52 +67,51 @@ def process_doc_content(file):
         result.append(word)
     return result
 
-# # 从 JSON 中读取倒排索引/词表
-# def get_from_file(filename):
-#     file = open(filename+'.json', 'r')
-#     res = json.JSONDecoder().decode(file.read())
-#     return res
+# 读取一个json文件，输入的文件名不用带后缀
+def get_JSON(filename):
+    result = {}
+    with open(os.path.join('jsons', filename+'.json'), 'r', encoding='utf-8') as f:
+        result = json.load(f)
+    return result
 
+# ! 要用的话得修改一下
 # # load the file.  Change it latter
 # def loadLocationIndex(word):
-#     f = open("index.json", encoding='utf-8')
+#     f = open('index.json', encoding='utf-8')
 #     dictionary = json.load(f)
 #     index = dictionary[word]
 #     return index
 
 
-# # load the file
-# def loadIndex(word):
-#     f = open("index.json", encoding='utf-8')
-#     dictionary = json.load(f)
-#     index = dictionary[word]
-#     result = []
-#     for item in index:
-#         result.append(int(item))
-#     return result
+# load the file
+def load_index(word):
+    result = []
+    with open(os.path.join('jsons', 'InvertedIndex.json'), 'r', encoding='utf-8') as f:
+        dictionary = json.load(f)
+        index = dictionary[word]
+        for item in index:
+            result.append(int(item))
+    return result
 
-# # print the search results
-# def printtext(wordlist, doclist):
-#     directory = "./Reuters"
-#     highlights = []
-#     for word in wordlist:
-#         highlights.append(word)
-#         highlights.append(word.upper())
-#         highlights.append(word.title())
-#     for docid in doclist:
-#         with open(directory + '/' + str(docid) + '.html', 'rb') as htmlfile:
-#             rawdata = htmlfile.read()
-#             encoding = chardet.detect(
-#                 rawdata)['encoding']
-#             text = rawdata.decode(encoding)
-#             text = html.unescape(text)
-#         # find title
-#         # find body
-#         print("************** Boolean Query Result **************")
-#         print("\033[1;33;40m"+str(docid)+".html"+"\033[0m")
-#         for word in highlights:
-#             text = text.replace(word, "\033[1;31;40m" + word + "\033[0m")
-#         print(text)
+# print filenames and the titles in terminal
+# output the content to *output*
+def print_result(wordlist, doclist, mode):
+    output = open('output', 'w')
+    print('################## {} Result ##################'.format(mode))
+    for docID in doclist:
+        title = ''
+        body = ''
+        # read title and body
+        with open(os.path.join('Reuters', str(docID) + '.html'), 'r') as f:
+            title = f.readline()
+            body = f.read()
+        # find title
+        # find body
+        print(BLUE+str(docID)+'.html: '+WHITE_+title, end='')
+        output.write(title)
+        output.write(body)
+        output.write('----------------------------------------\n')
+    output.close()
 
-if __name__ == "__main__":
-    print(process_doc_content('t.html'))
+if __name__ == '__main__':
+    print(get_JSON('VSM'))

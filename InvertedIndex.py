@@ -16,7 +16,7 @@ def build_Iindex():
     doc_sizes = {}   # size of each documents
     # process each document
     docs = os.listdir('Reuters')
-    for file in tqdm(docs):
+    for file in tqdm(docs):  
         content = process_doc_content(os.path.join('Reuters', file))
         docID = get_doc_ID(file)
         # print(docID)
@@ -40,6 +40,7 @@ def build_Iindex():
     print(GREEN+'Inverted index is successfully built and saved!'+WHITE_)
     print(GREEN+str(DOCS)+WHITE_+' documents and '+GREEN+str(len(index.keys()))+WHITE_+' indexes in total!')
     return index, doc_sizes
+
 
 def build_VSM(index, doc_sizes):
     # build VSM
@@ -82,6 +83,6 @@ def build_VSM(index, doc_sizes):
 #     return sum_VSM
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     index, doc_sizes = build_Iindex()
     build_VSM(index, doc_sizes)

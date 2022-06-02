@@ -1,6 +1,15 @@
 # Goldbach-Conjecture
 ## IR project
 
+## 注意：统一一点规范
+* 多写点注释
+* python文件名采用每个词首字母大写，无下划线的形式
+* 函数名用下划线_分割单词
+* 每个模块的最顶级函数取名为`handler()`，可以直接在`main.py`中调用`xxx.handler(query)`（参考目前完成的布尔检索模块）
+* 如果还没下载语料库的，直接跑`main.py`即可自动下载解压（在校网下），途中可能会提示一些包没安装，根据报错安装一下（其中*rarfile*用`sudo apt install unrar`，别的用pip）
+* 建议字符串用单引号括
+
+
 Group members & works: 
 * zpq
   *  程序入口
