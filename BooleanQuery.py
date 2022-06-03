@@ -23,7 +23,7 @@ def bool_query(query):
     while(query.find('  ') >= 0):
         query = query.replace('  ',' ')
     query_len = len(query)
-    all_doc = utils.get_all_doc()
+    all_doc = utils.get_all_docID()
 
     isAnd = False
     isOr = False
@@ -158,19 +158,19 @@ def bool_query(query):
             if(cur_word != ''):
                 cur_word = cur_word.lower()
                 if(isAnd):
-                    result_add = utils.load_index(cur_word)
+                    result_add = utils.load_doclist(cur_word)
                     result_cur = build_and(result_cur, result_add)
                     isAnd = False
                     cur_word = ''
                     isWord = True
                 elif(isOr):
-                    result_add = utils.load_index(cur_word)
+                    result_add = utils.load_doclist(cur_word)
                     result_cur = build_or(result_cur, result_add)
                     isOr = False
                     cur_word = ''
                     isWord = True
                 elif(isNot):
-                    result_add = utils.load_index(cur_word)
+                    result_add = utils.load_doclist(cur_word)
                     result_add = build_not(result_add, all_doc)
                     if(isHeadNot):
                         result_cur = result_add
@@ -181,14 +181,14 @@ def bool_query(query):
                     cur_word = ''
                     isWord = True
                 elif(isAndNot):
-                    result_add = utils.load_index(cur_word)
+                    result_add = utils.load_doclist(cur_word)
                     result_add = build_not(result_add, all_doc)
                     result_cur = build_and(result_cur, result_add)
                     isAndNot = False
                     cur_word = ''
                     isWord = True
                 elif(isOrNot):
-                    result_add = utils.load_index(cur_word)
+                    result_add = utils.load_doclist(cur_word)
                     result_add = build_not(result_add, all_doc)
                     result_cur = build_or(result_cur, result_add)
                     isOrNot = False
@@ -199,7 +199,7 @@ def bool_query(query):
                         print('Bad Query! There should be no consecutive words!')
                         return []
                     else:
-                        result_cur = utils.load_index(cur_word)
+                        result_cur = utils.load_doclist(cur_word)
                         cur_word = ''
                         isWord = True
             i = i + 1
@@ -284,19 +284,19 @@ def bool_query(query):
     if(cur_word != ''):
         cur_word = cur_word.lower()
         if(isAnd):
-            result_add = utils.load_index(cur_word)
+            result_add = utils.load_doclist(cur_word)
             result_cur = build_and(result_cur, result_add)
             isAnd = False
             cur_word = ''
             isWord = True
         elif(isOr):
-            result_add = utils.load_index(cur_word)
+            result_add = utils.load_doclist(cur_word)
             result_cur = build_or(result_cur, result_add)
             isOr = False
             cur_word = ''
             isWord = True
         elif(isNot):
-            result_add = utils.load_index(cur_word)
+            result_add = utils.load_doclist(cur_word)
             result_add = build_not(result_add, all_doc)
             if(isHeadNot):
                 result_cur = result_add
@@ -307,14 +307,14 @@ def bool_query(query):
             cur_word = ''
             isWord = True
         elif(isAndNot):
-            result_add = utils.load_index(cur_word)
+            result_add = utils.load_doclist(cur_word)
             result_add = build_not(result_add, all_doc)
             result_cur = build_and(result_cur, result_add)
             isAndNot = False
             cur_word = ''
             isWord = True
         elif(isOrNot):
-            result_add = utils.load_index(cur_word)
+            result_add = utils.load_doclist(cur_word)
             result_add = build_not(result_add, all_doc)
             result_cur = build_or(result_cur, result_add)
             isOrNot = False
@@ -325,7 +325,7 @@ def bool_query(query):
                 print('Bad Query! There should be no consecutive words!')
                 return []
             else:
-                result_cur = utils.load_index(cur_word)
+                result_cur = utils.load_doclist(cur_word)
                 cur_word = ''
                 isWord = True
     return result_cur

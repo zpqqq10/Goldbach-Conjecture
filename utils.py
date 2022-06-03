@@ -26,17 +26,16 @@ def write_to_json(data, file):
         json.dump(data, f) 
 
 # 获取语料库的所有文件列表, 返回形式[1, 3, 9, ...]
-def get_all_doc():
+def get_all_docID():
     filelist = []
-    files = os.listdir('./Reuters/')
+    files = os.listdir('Reuters/')
     for file in files:
         filelist.append(get_doc_ID(file))
     return sorted(filelist)
 
 # 从文档名中截取文档 ID
 def get_doc_ID(file):
-    id = os.path.splitext(file)[0]
-    return int(id)
+    return int(file[:-5])
 
 # 处理语料库文档的内容
 def process_doc_content(file):
@@ -74,23 +73,81 @@ def get_JSON(filename):
         result = json.load(f)
     return result
 
-# ! 要用的话得修改一下
-# # load the file.  Change it latter
-# def loadLocationIndex(word):
-#     f = open('index.json', encoding='utf-8')
-#     dictionary = json.load(f)
-#     index = dictionary[word]
-#     return index
-
-
-# load the file
-def load_index(word):
+# load the inverted index
+# return a list of docID
+def load_doclist(word):
     result = []
     with open(os.path.join('jsons', 'InvertedIndex.json'), 'r', encoding='utf-8') as f:
         dictionary = json.load(f)
         index = dictionary[word]
-        for item in index:
-            result.append(int(item))
+        for docID in index.keys():
+            result.append(int(docID))
+    return result
+
+# load the compressed posting list of a word
+# return the same thing as *load_index*, a list of docID
+def load_cprs_doclist(word):
+    result = []
+    with open(os.path.join('jsons', 'CompressedInvertedIndex.json'), 'r', encoding='utf-8') as f:
+        dictionary = json.load(f)
+        arr = dictionary[word]
+        id = 0
+        for item in arr:
+            if type(item) is int:
+                # sum up delta
+                id += item
+                result.append(id)
+    return result
+
+# load the inverted index with postions
+# return a list of docID with postion info
+def load_doclist_withp(word):
+    result = {}
+    with open(os.path.join('jsons', 'InvertedIndex.json'), 'r', encoding='utf-8') as f:
+        dictionary = json.load(f)
+        index = dictionary[word]
+        for docID in index:
+            result[int(docID)] = index[docID]
+    return result
+
+# load the compressed posting list of a word
+# return the same thing as *load_index*, a list of docID with postion info
+def load_cprs_doclist_withp(word):
+    result = {}
+    with open(os.path.join('jsons', 'CompressedInvertedIndex.json'), 'r', encoding='utf-8') as f:
+        dictionary = json.load(f)
+        arr = dictionary[word]
+        id = 0
+        for item in arr:
+            if type(item) is int:
+                # sum up delta
+                id += item
+            else :
+                result[id] = item
+    return result
+
+# load a document vector
+# return {} if the document ID is invalid
+def load_docvec(docID): 
+    result = {}
+    with open(os.path.join('jsons', 'VSM.json'), 'r', encoding='utf-8') as f:
+        vsm = json.load(f)
+        if str(docID) in vsm.keys(): 
+            result = vsm[str(docID)]
+        else :
+            result = {}
+    return result
+
+# load a document sum of (tf, idf, tf*idf) (tf is always nearly 1)
+# return [] if the document ID is invalid
+def load_docsum(docID): 
+    result = []
+    with open(os.path.join('jsons', 'VSMSum.json'), 'r', encoding='utf-8') as f:
+        vsm = json.load(f)
+        if str(docID) in vsm.keys(): 
+            result = vsm[str(docID)]
+        else :
+            result = []
     return result
 
 # print filenames and the titles in terminal
@@ -114,4 +171,7 @@ def print_result(wordlist, doclist, mode):
     output.close()
 
 if __name__ == '__main__':
-    print(get_JSON('VSM'))
+
+    print(load_cprs_doclist('bahia') == load_doclist('bahia'))
+    print(load_doclist_withp('bahia') == load_cprs_doclist_withp('bahia'))
+    print(load_docsum(5))

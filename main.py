@@ -11,11 +11,11 @@ import BooleanQuery
 
 
 prompt = '''Please select the query mode:  
-{}1{}.Boolean Query
-{}2{}.Phrase Query
-{}3{}.Wildcard Query
-{}4{}.Fuzzy Query
-{}0{}.quit
+    {}1{}.Boolean Query
+    {}2{}.Phrase Query
+    {}3{}.Wildcard Query
+    {}4{}.Fuzzy Query
+    {}0{}.quit
 > '''.format(BLUE, WHITE_, BLUE, WHITE_, BLUE, WHITE_, BLUE, WHITE_, BLUE, WHITE_)
 # main function, a loop
 
@@ -50,7 +50,7 @@ def main():
             # if query.find('*')!=-1:
                 #GlobbingQuery.controller(query, btree, btree_rev, wordlist)
         except Exception as e:
-            print(repr(e))
+            print(RED+repr(e)+WHITE_)
 
 if __name__ == '__main__':
     # check files
@@ -62,7 +62,9 @@ if __name__ == '__main__':
             # create a dir
             raise Exception('Please make sure there is no file named jsons!')
         if not os.path.exists(os.path.join('jsons', 'InvertedIndex.json')) or \
+           not os.path.exists(os.path.join('jsons', 'CompressedInvertedIndex.json')) or \
            not os.path.exists(os.path.join('jsons', 'Dictionary.json')) or \
+           not os.path.exists(os.path.join('jsons', 'VSMSum.json')) or \
            not os.path.exists(os.path.join('jsons', 'VSM.json')):
             if not os.path.exists('Reuters'):
                 if not os.path.exists('Reuters.rar'):
@@ -76,6 +78,7 @@ if __name__ == '__main__':
                 z.close()
                 print(GREEN+'Extraction is successfully done!'+WHITE_)
             index, doc_sizes = InvertedIndex.build_Iindex()
-            InvertedIndex.build_VSM(index, doc_sizes)
+            VSM = InvertedIndex.build_VSM(index, doc_sizes)
+            InvertedIndex.sumup_VSM(VSM)
 
     main()

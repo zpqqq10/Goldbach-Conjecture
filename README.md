@@ -8,6 +8,7 @@
 * 每个模块的最顶级函数取名为`handler()`，可以直接在`main.py`中调用`xxx.handler(query)`（参考目前完成的布尔检索模块）
 * 如果还没下载语料库的，直接跑`main.py`即可自动下载解压（在校网下），途中可能会提示一些包没安装，根据报错安装一下（其中*rarfile*用`sudo apt install unrar`，别的用pip）
 * 建议字符串用单引号括
+* `utils.py`里面有一些编写模块时需要用到的函数，名字与往年其他人作业的可能不同
 
 
 Group members & works: 
