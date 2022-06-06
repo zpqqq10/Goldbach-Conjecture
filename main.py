@@ -7,6 +7,7 @@ from utils import *
 import rarfile
 import InvertedIndex
 import BooleanQuery
+import SpellCorrect
 # sudo apt install unrar
 
 
@@ -44,8 +45,8 @@ def main():
                 print('globbing')
             # Fuzzy Query
             elif(int(number) == 4):
-                # SpellingCorrect.spelling_correct(query)
-                print('correcting')
+                print('correcting ... ')
+                print(SpellCorrect.spell_correct(query))
             # merge
             # if query.find('*')!=-1:
                 #GlobbingQuery.controller(query, btree, btree_rev, wordlist)

@@ -2,7 +2,10 @@ import utils
 
 
 def handler(query):
+    # boolean query
     result = bool_query(query)
+
+    # remove 'AND','OR','NOT','(',')',consecutive blank space
     query = query.replace('NOT','')
     query = query.replace('AND','')
     query = query.replace('OR','')
@@ -11,20 +14,26 @@ def handler(query):
     query = query.strip(' ')
     while(query.find('  ') >= 0):
         query = query.replace('  ',' ')
+
+    # get word list of query
     word_list = []
     word_list = query.split(' ')
-    # print(word_list)
-    # print(result)
+
+    # print result
     utils.print_result(word_list, result, 'Boolean Query')
 
 
+# return the result of boolean query
 def bool_query(query):
+    # remove consecutive blank space
     query = query.strip(' ')
     while(query.find('  ') >= 0):
         query = query.replace('  ',' ')
+
     query_len = len(query)
     all_doc = utils.get_all_docID()
 
+    # identify last unprocessed word
     isAnd = False
     isOr = False
     isNot = False
@@ -331,7 +340,7 @@ def bool_query(query):
     return result_cur
                 
 
-
+# merge index1 AND index2
 def build_and(index1, index2):
     index1.sort()
     index2.sort()
@@ -351,6 +360,7 @@ def build_and(index1, index2):
             i2 = i2 + 1
     return ret
 
+# merge index1 or index2
 def build_or(index1, index2):
     index1.sort()
     index2.sort()
@@ -378,6 +388,7 @@ def build_or(index1, index2):
         i2 = i2 + 1
     return ret
 
+# merge NOT index
 def build_not(index, all_doc):
     index.sort()
     all_doc.sort()

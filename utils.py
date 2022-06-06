@@ -79,7 +79,7 @@ def load_doclist(word):
     result = []
     with open(os.path.join('jsons', 'InvertedIndex.json'), 'r', encoding='utf-8') as f:
         dictionary = json.load(f)
-        index = dictionary[word]
+        index = dictionary.get(word, {})
         for docID in index.keys():
             result.append(int(docID))
     return result
@@ -105,7 +105,7 @@ def load_doclist_withp(word):
     result = {}
     with open(os.path.join('jsons', 'InvertedIndex.json'), 'r', encoding='utf-8') as f:
         dictionary = json.load(f)
-        index = dictionary[word]
+        index = dictionary.get(word, {})
         for docID in index:
             result[int(docID)] = index[docID]
     return result
@@ -116,7 +116,7 @@ def load_cprs_doclist_withp(word):
     result = {}
     with open(os.path.join('jsons', 'CompressedInvertedIndex.json'), 'r', encoding='utf-8') as f:
         dictionary = json.load(f)
-        arr = dictionary[word]
+        arr = dictionary.get(word, {})
         id = 0
         for item in arr:
             if type(item) is int:

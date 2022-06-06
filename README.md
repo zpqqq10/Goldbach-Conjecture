@@ -64,3 +64,11 @@ AND/OR/AND NOT/ OR NOT不能出现在句首，NOT可以
 以上都不能出现在句尾
 
 单词和单词不能连续出现x
+
+2022.6.6 kyq
+
+非常简单的拼写矫正 T T
+
+改了utils.py里的 `load_cprs_doclist_withp`，`load_doclist_withp`，`load_doclist` 里的`dictionary.get(word, {})`部分，get不到内容时要返回空的{}
+
+最近各种麻烦事缠身，这两天尽量再换个快的做法 TOT
