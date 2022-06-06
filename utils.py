@@ -210,7 +210,7 @@ def cos_dist(vec1, vec2):
         qd += sum(v[term])
         q_2 += v[term][0] ** 2
         d_2 += v[term][1] ** 2
-    
+    # result
     return qd / (q_2 * d_2)
 
 if __name__ == '__main__':
