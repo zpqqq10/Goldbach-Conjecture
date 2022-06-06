@@ -8,6 +8,7 @@ RESERVEDBITS = 6
 # 文档的数量
 DOCS = 10788
 
+# TODO: _ - .
 def build_Iindex():
     # build inverted index
     index = {}      # inverted index list

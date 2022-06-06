@@ -1,5 +1,6 @@
 import os
 import json
+from unittest import result
 from nltk import word_tokenize
 
 CANCEL = '\033[0m'
@@ -34,6 +35,7 @@ def get_all_docID():
     return sorted(filelist)
 
 # 从文档名中截取文档 ID
+
 def get_doc_ID(file):
     return int(file[:-5])
 
@@ -170,8 +172,50 @@ def print_result(wordlist, doclist, mode):
         output.write('----------------------------------------\n')
     output.close()
 
+# pass two document vectors
+# return the cosine distance
+def cos_dist(vec1, vec2): 
+    terms1 = list(vec1.keys())
+    terms2 = list(vec2.keys())
+    v1 = {}
+    v2 = {}
+    # if is a list
+    if type(vec1[terms1[0]]) is list:
+        # use tf*idf
+        for term in terms1: 
+            v1[term] = vec1[term][2]
+        for term in terms2: 
+            v2[term] = vec2[term][2]
+    else: 
+        v1 = vec1
+        v2 = vec2
+    v = dict(v1, **v2)
+    # calculate
+    qd = 0      # sum of qd
+    q_2 = 0     # sum of q^2
+    d_2 = 0     # sum of d^2
+    for term in v.keys():
+        l = []
+        if term in terms1: 
+            l.append(v1[term])
+        else: 
+            l.append(0)
+        if term in terms2: 
+            l.append(v2[term])
+        else: 
+            l.append(0)
+        v[term] = l
+    # cosine
+    for term in v.keys(): 
+        qd += sum(v[term])
+        q_2 += v[term][0] ** 2
+        d_2 += v[term][1] ** 2
+    # result
+    return qd / (q_2 * d_2)
+
 if __name__ == '__main__':
 
-    print(load_cprs_doclist('bahia') == load_doclist('bahia'))
-    print(load_doclist_withp('bahia') == load_cprs_doclist_withp('bahia'))
-    print(load_docsum(5))
+    # print(load_cprs_doclist('bahia') == load_doclist('bahia'))
+    # print(load_doclist_withp('bahia') == load_cprs_doclist_withp('bahia'))
+    # print(load_docsum(5))
+    print(cos_dist(load_docvec(22), load_docvec(21521)))
