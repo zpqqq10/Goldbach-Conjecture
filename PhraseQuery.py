@@ -1,4 +1,3 @@
-from InvertedIndex import build_Iindex
 import utils
 import nltk
 def handler(query):
@@ -8,7 +7,7 @@ def handler(query):
 
 # 'of': {1: [60, 69, 144, 157, 178, 191, 209, 274], 6: [12, 22]}
 def getinverted_index():
-    inv,_ = build_Iindex()
+    inv = utils.get_JSON('InvertedIndex')
     return inv
 
 def word_split(text):
@@ -85,3 +84,4 @@ def phrasequery(query):
         if doc_id not in results:
             results.append(doc_id)
     return results
+    
