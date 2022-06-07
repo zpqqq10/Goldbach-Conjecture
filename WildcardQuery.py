@@ -3,7 +3,7 @@ import re
 import BooleanQuery
 import utils
 import TopK
-
+#6.8 6a.m. 实现一个*的查询 今天上午会继续改，两个大程赶在一起了，拖大家后腿了实在对不起！
 #通配查询
 #使用通配符*代替字符
 def handler(query):
