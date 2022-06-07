@@ -1,6 +1,13 @@
 from xmlrpc.client import MAXINT
 import utils
 
+def handler(query): 
+    wordlist = query.split(' ')
+    print(wordlist)
+    for word in wordlist:
+        print(spell_correct(word), end=' ')
+    print()
+
 def spell_correct(word):
     doc_list = utils.load_doclist_withp(word)
     # the dictionary does not contain this word
@@ -43,6 +50,9 @@ def spell_correct(word):
                 result = possible_word[i]
             i = i + 1
         return result
+    else :
+        # exists
+        return word
 
 
 # compute levenshtein distance between word1 and word2

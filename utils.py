@@ -14,6 +14,9 @@ WHITE = '\033[1;37m'
 WHITE_ = '\033[0m'
 CLEAR = '\033[1;1H\033[2J'
 
+# top K
+TOPK = 10
+
 # TODO:
 # - 修改文件
 # - nltk 词干还原
@@ -152,12 +155,22 @@ def load_docsum(docID):
             result = []
     return result
 
+
 # print filenames and the titles in terminal
 # output the content to *output*
 def print_result(wordlist, doclist, mode):
     output = open('output', 'w')
-    print('################## {} Result ##################'.format(mode))
+    _doclist = {}
+    show = 0
     for docID in doclist:
+        _doclist[docID] = load_docsum(docID)[2]
+    doclist = sorted(_doclist.items(),key=lambda i:i[1], reverse=True)
+    # print(doclist)
+    print('################## {} Result ##################'.format(mode))
+    print(BLUE+str(len(doclist))+WHITE_+' documents in total: ')
+    for doc in doclist:
+        docID = doc[0]
+        score = doc[1]
         title = ''
         body = ''
         # read title and body
@@ -166,10 +179,12 @@ def print_result(wordlist, doclist, mode):
             body = f.read()
         # find title
         # find body
-        print(BLUE+str(docID)+'.html: '+WHITE_+title, end='')
+        if show < TOPK:
+            print(BLUE+str(docID)+'.html: '+'\t'+ '%.6f'%score +WHITE_ + '\t'+title, end='')
         output.write(title)
         output.write(body)
         output.write('----------------------------------------\n')
+        show += 1
     output.close()
 
 # pass two document vectors
