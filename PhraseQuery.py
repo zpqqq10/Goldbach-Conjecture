@@ -4,8 +4,8 @@ import TopK
 
 
 def handler(query):
-    word_list = word_split(query)
-    result = phrasequery(query)
+    word_list = utils.word_split(query)
+    result = phrasequery(query, word_list)
     # porecess result
     result = [int(res) for res in result]
     result = TopK.TopK_sort(result)
@@ -16,34 +16,9 @@ def getinverted_index():
     inv = utils.get_JSON('InvertedIndex')
     return inv
 
-def word_split(text):
-    res = []
-    result = []
-    # 标点符号和数字
-    punc_digit = [',', '.', ';', ':', '&', '>', "'", '"', '`', '+', '(', ')', '[', ']', '{', '}',
-                  '*', '?', '!', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
-    for word in nltk.word_tokenize(text):
-        # 转换为小写
-        word = word.lower()
-        # 处理标点符号并忽略's
-        for c in punc_digit:
-            if word != "'s": 
-                word = word.replace(c, '')
-        # 处理空字符串
-        if len(word) == 0 or word[0] == '-':
-            continue
-        # 处理 March/April 中的 / ：分成两个单词
-        if word.find('/') > 0:
-            res = word.split('/')
-            for w in res:
-                result.append(w)
-            continue
-        result.append(word)
-    return result
-
-def phrasequery(query):
+def phrasequery(query, word_list):
     inverted = getinverted_index()
-    words = [word for word in word_split(query) if word in list(inverted.keys())]
+    words = [word for word in word_list if word in list(inverted.keys())]
 
     # print(words)
 

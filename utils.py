@@ -1,7 +1,9 @@
+from math import sqrt
 import os
 import json
 from unittest import result
 from nltk import word_tokenize
+from nltk.stem import WordNetLemmatizer
 
 CANCEL = '\033[0m'
 RED = '\033[1;31m'
@@ -38,21 +40,16 @@ def get_all_docID():
     return sorted(filelist)
 
 # 从文档名中截取文档 ID
-
 def get_doc_ID(file):
     return int(file[:-5])
 
-# 处理语料库文档的内容
-def process_doc_content(file):
-    # 处理 ASCII 格式的语料
-    with open(file, 'r', encoding='ISO-8859-1') as f:
-        content = f.read()
+def word_split(text):
     res = []
     result = []
     # 标点符号和数字
-    punc_digit = [',', '.', ';', ':', '&', '>', "'", '"', '`', '+', '(', ')', '[', ']', '{', '}',
+    punc_digit = [',', '.', ';', ':', '&', '>', "'", '"', '`', '+', '(', ')', '[', ']', '{', '}', '-'
                   '*', '?', '!', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
-    for word in word_tokenize(content):
+    for word in word_tokenize(text):
         # 转换为小写
         word = word.lower()
         # 处理标点符号并忽略's
@@ -60,7 +57,7 @@ def process_doc_content(file):
             if word != "'s": 
                 word = word.replace(c, '')
         # 处理空字符串
-        if len(word) == 0 or word[0] == '-':
+        if len(word) == 0:
             continue
         # 处理 March/April 中的 / ：分成两个单词
         if word.find('/') > 0:
@@ -70,6 +67,13 @@ def process_doc_content(file):
             continue
         result.append(word)
     return result
+
+# 处理语料库文档的内容
+def process_doc_content(file):
+    # 处理 ASCII 格式的语料
+    with open(file, 'r', encoding='ISO-8859-1') as f:
+        content = f.read()
+    return word_split(content)
 
 # 读取一个json文件，输入的文件名不用带后缀
 def get_JSON(filename):
@@ -207,6 +211,21 @@ def cos_dist(vec1, vec2):
             v2[term] = vec2[term][2]
     else: 
         v2 = vec2
+    # normalization
+    n = 0
+    for term in v1: 
+        n += v1[term] **2
+    if n > 1:
+        n = sqrt(n)
+        for term in v1:
+            v1[term] /= n
+    n = 0
+    for term in v2: 
+        n += v2[term] **2
+    if n > 1:
+        n = sqrt(n)
+        for term in v2:
+            v2[term] /= n
     v = dict(v1, **v2)
     # calculate
     qd = 0      # sum of qd
@@ -236,4 +255,24 @@ if __name__ == '__main__':
     # print(load_cprs_doclist('bahia') == load_doclist('bahia'))
     # print(load_doclist_withp('bahia') == load_cprs_doclist_withp('bahia'))
     # print(load_docsum(5))
-    print(cos_dist(load_docvec(22), load_docvec(21521)))
+    # print(cos_dist(load_docvec(22), load_docvec(21521)))
+    token = word_split("26-FEB-1987 doctors government's dlrs tonne aug playing dentist's U.S.")
+    cnt = 0
+    ind = 0
+    for t in token:
+        if t == "'s":
+            token[ind-1] += 's'
+            cnt += 1
+        ind += 1
+    for i in range(cnt):
+        token.remove("'s")
+    print(token)
+    lem = []
+    lemmatizer = WordNetLemmatizer()
+    for t in token:
+        if t[-3:] == 'ing':
+            lem.append(lemmatizer.lemmatize(t, 'v'))
+        else:
+            lem.append(lemmatizer.lemmatize(t))
+    # token = [lemmatizer.lemmatize(t) for t in token]
+    print(lem)
