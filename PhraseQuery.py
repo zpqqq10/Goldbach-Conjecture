@@ -1,8 +1,14 @@
 import utils
 import nltk
+import TopK
+
+
 def handler(query):
     word_list = word_split(query)
     result = phrasequery(query)
+    # porecess result
+    result = [int(res) for res in result]
+    result = TopK.TopK_sort(result)
     utils.print_result(word_list, result, 'Phrase Query')
 
 # 'of': {1: [60, 69, 144, 157, 178, 191, 209, 274], 6: [12, 22]}
@@ -47,9 +53,9 @@ def phrasequery(query):
     for word in words:
         word_doc_ids=inverted[word].keys()
         tempDic.setdefault(word,{})
-        for ID in word_doc_ids:
-            word_doc_position =  inverted[word][ID]
-            tempDic[word].setdefault(ID,word_doc_position)
+        for _id in word_doc_ids:
+            word_doc_position =  inverted[word][_id]
+            tempDic[word].setdefault(_id,word_doc_position)
 
     # print(tempDic)
 

@@ -9,6 +9,7 @@ import InvertedIndex
 import BooleanQuery
 import SpellCorrection
 import TermQuery
+import PhraseQuery
 # sudo apt install unrar
 
 
@@ -39,8 +40,7 @@ def main():
                 BooleanQuery.handler(query)
             # phrase query
             elif(int(number) == 2):
-                # PhraseQuery.phrasequery(query)
-                print('phrase')
+                PhraseQuery.handler(query)
             # wildcard query
             elif(int(number) == 3):
                 # GlobbingQuery.controller(query, btree, btree_rev,wordlist)
