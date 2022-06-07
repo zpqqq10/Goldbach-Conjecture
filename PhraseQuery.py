@@ -1,5 +1,6 @@
 from InvertedIndex import build_Iindex
 import utils
+import nltk
 def handler(query):
     word_list = word_split(query)
     result = phrasequery(query)
@@ -11,25 +12,29 @@ def getinverted_index():
     return inv
 
 def word_split(text):
-    word_list = []
-    wcurrent = []
-    windex = 0
-
-    for i, c in enumerate(text):
-        if c.isalnum():
-            wcurrent.append(c)
-        elif wcurrent:
-            windex = windex + 1
-            word = u''.join(wcurrent).lower()
-            word_list.append(word)
-            wcurrent = []
- 
-    if wcurrent:
-        windex = windex + 1
-        word = u''.join(wcurrent).lower()
-        word_list.append(word)
- 
-    return word_list
+    res = []
+    result = []
+    # 标点符号和数字
+    punc_digit = [',', '.', ';', ':', '&', '>', "'", '"', '`', '+', '(', ')', '[', ']', '{', '}',
+                  '*', '?', '!', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
+    for word in nltk.word_tokenize(text):
+        # 转换为小写
+        word = word.lower()
+        # 处理标点符号并忽略's
+        for c in punc_digit:
+            if word != "'s": 
+                word = word.replace(c, '')
+        # 处理空字符串
+        if len(word) == 0 or word[0] == '-':
+            continue
+        # 处理 March/April 中的 / ：分成两个单词
+        if word.find('/') > 0:
+            res = word.split('/')
+            for w in res:
+                result.append(w)
+            continue
+        result.append(word)
+    return result
 
 def phrasequery(query):
     inverted = getinverted_index()
@@ -74,8 +79,7 @@ def phrasequery(query):
             if 1 in isAdd:
                 doc_return.append(key)
     elif len(words)==1:
-        key = list(tempDic[words[0]].keys())[0]
-        doc_return.append(key)
+        doc_return = list(tempDic[words[0]].keys())
     results = []
     for doc_id in doc_return:
         if doc_id not in results:
