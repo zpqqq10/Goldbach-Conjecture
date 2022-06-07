@@ -8,6 +8,7 @@ import rarfile
 import InvertedIndex
 import BooleanQuery
 import SpellCorrection
+import TermQuery
 # sudo apt install unrar
 
 
@@ -15,9 +16,10 @@ prompt = '''Please select the query mode:
     {}1{}.Boolean Query
     {}2{}.Phrase Query
     {}3{}.Wildcard Query
-    {}4{}.Spell Correction
+    {}4{}.Term Query
+    {}5{}.Spell Correction
     {}0{}.quit
-> '''.format(BLUE, WHITE_, BLUE, WHITE_, BLUE, WHITE_, BLUE, WHITE_, BLUE, WHITE_)
+> '''.format(BLUE, WHITE_, BLUE, WHITE_, BLUE, WHITE_, BLUE, WHITE_, BLUE, WHITE_, BLUE, WHITE_)
 # main function, a loop
 
 
@@ -28,7 +30,7 @@ def main():
         try:
             if int(number) == 0:
                 break
-            elif int(number) > 4 or int(number) < 0:
+            elif int(number) > 5 or int(number) < 0:
                 print('ERROR: WRONG INPUT!')
                 continue
             query = input('Input your query:\n> ')
@@ -43,8 +45,10 @@ def main():
             elif(int(number) == 3):
                 # GlobbingQuery.controller(query, btree, btree_rev,wordlist)
                 print('globbing')
-            # Fuzzy Query
             elif(int(number) == 4):
+                TermQuery.handler(query)
+            # Correction
+            elif(int(number) == 5):
                 print('Correcting ... ')
                 # print(SpellCorrection.spell_correct(query))
                 SpellCorrection.handler(query)

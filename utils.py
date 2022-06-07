@@ -160,30 +160,28 @@ def load_docsum(docID):
 # output the content to *output*
 def print_result(wordlist, doclist, mode):
     output = open('output', 'w')
-    _doclist = {}
     show = 0
-    for docID in doclist:
-        _doclist[docID] = load_docsum(docID)[2]
-    doclist = sorted(_doclist.items(),key=lambda i:i[1], reverse=True)
     # print(doclist)
+    if type(doclist) is dict:
+        doclist = doclist.items()
     print('################## {} Result ##################'.format(mode))
     print(BLUE+str(len(doclist))+WHITE_+' documents in total: ')
     for doc in doclist:
         docID = doc[0]
         score = doc[1]
         title = ''
-        body = ''
+        # body = ''
         # read title and body
-        with open(os.path.join('Reuters', str(docID) + '.html'), 'r') as f:
+        with open(os.path.join('Reuters', str(docID) + '.html'), 'r', encoding='ISO-8859-1') as f:
             title = f.readline()
-            body = f.read()
+            # body = f.read()
         # find title
         # find body
         if show < TOPK:
             print(BLUE+str(docID)+'.html: '+'\t'+ '%.6f'%score +WHITE_ + '\t'+title, end='')
-        output.write(title)
-        output.write(body)
-        output.write('----------------------------------------\n')
+        output.write(str(docID) + '.html: '+'\t'+ '%.6f'%score + '\t'+ title + '\n')
+        # output.write(body)
+        # output.write('----------------------------------------\n')
         show += 1
     output.close()
 
@@ -192,6 +190,8 @@ def print_result(wordlist, doclist, mode):
 def cos_dist(vec1, vec2): 
     terms1 = list(vec1.keys())
     terms2 = list(vec2.keys())
+    if len(terms1) == 0 or len(terms2) == 0: 
+        return 0
     v1 = {}
     v2 = {}
     # if is a list
@@ -199,10 +199,13 @@ def cos_dist(vec1, vec2):
         # use tf*idf
         for term in terms1: 
             v1[term] = vec1[term][2]
+    else: 
+        v1 = vec1
+    if type(vec2[terms2[0]]) is list:
+        # use tf*idf
         for term in terms2: 
             v2[term] = vec2[term][2]
     else: 
-        v1 = vec1
         v2 = vec2
     v = dict(v1, **v2)
     # calculate

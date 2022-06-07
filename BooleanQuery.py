@@ -1,5 +1,6 @@
+from torch import topk
 import utils
-
+import TopK
 
 def handler(query):
     # boolean query
@@ -20,6 +21,7 @@ def handler(query):
     word_list = query.split(' ')
 
     # print result
+    result = TopK.TopK_sort(result)
     utils.print_result(word_list, result, 'Boolean Query')
 
 
