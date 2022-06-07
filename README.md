@@ -26,7 +26,18 @@ Group members & works:
   * 短语查询
   * 同义词
   * TopK
-* 尽量根据模块的关联度和工作量分配了所有的锅
+
+Work: 
+- [x] 倒排索引
+- [x] VSM
+- [x] 索引压缩
+- [x] 布尔查询
+- [ ] 通配查询
+- [x] 短语查询
+- [x] 拼写矫正 （速度比较慢）
+- [x] 词典索引 （因为python的字典就是哈希索引的，因此也可以说已经实现了基于hash的词典索引）
+- [ ] 同义词
+- [x] TopK （比较简单，暂未实现堆）
 
 Environment: 
 * **Linux**
@@ -36,39 +47,11 @@ Packages:
 * nltk?
 * chardet?
 
+TODO：
+* zpq：在`utils.py`中增加一个`word_split()`函数，用来将Query分成词表
+* zpq：尝试引入词性工具，增加_ - 's .的处理
+* kyq：搞一下同义词
+* zjc：用堆实现TopK，传入字典，传出列表（列表元素为`(docID, score)`），不清楚的话找我
+* 所有人：在自己电脑上把`main.py`跑起来，如果nltk提示找不到包，百度一下解决这个问题，大概流程就是去网站上下载包，然后把包放到报错的目录下（nltk找不到包的报错是寻找了以下哪些哪些路径，没有找到包），我晚上找一找我看得链接放上来
 
-### zpq
-
-倒排索引和VSM已经好了，如果后续需要根据大家的方便修改保存的格式可以找我协商修改
-
-Linux下使用rarfile需要使用sudo apt install unrar
-
-为了方便pull和push，我设置忽略掉了一些内容(见.gitignore)
-
-为了方便调试，大家可以手动保留Reuters中的1-45共25个文档，并修改InvertedIndex.py中的DOCS为25
-
-**任务全部分配好了，大家赶紧加油干吧**
-
-
-
-### 2022.5.31. kyq
-
-布尔检索好了x
-
-目前没发现问题x
-
-可以使用 AND/OR/NOT/AND NOT/OR NOT/括号
-
-AND/OR/AND NOT/ OR NOT不能出现在句首，NOT可以
-
-以上都不能出现在句尾
-
-单词和单词不能连续出现x
-
-2022.6.6 kyq
-
-非常简单的拼写矫正 T T
-
-改了utils.py里的 `load_cprs_doclist_withp`，`load_doclist_withp`，`load_doclist` 里的`dictionary.get(word, {})`部分，get不到内容时要返回空的{}
-
-最近各种麻烦事缠身，这两天尽量再换个快的做法 TOT
+# 大家都加快进度赶一赶！先做出能跑的东西再考虑优化效果！
