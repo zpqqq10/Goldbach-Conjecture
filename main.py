@@ -10,6 +10,7 @@ import BooleanQuery
 import SpellCorrection
 import TermQuery
 import PhraseQuery
+import WildcardQuery
 # sudo apt install unrar
 
 
@@ -22,6 +23,7 @@ prompt = '''Please select the query mode:
     {}0{}.quit
 > '''.format(BLUE, WHITE_, BLUE, WHITE_, BLUE, WHITE_, BLUE, WHITE_, BLUE, WHITE_, BLUE, WHITE_)
 # main function, a loop
+
 
 
 def main():
@@ -43,7 +45,7 @@ def main():
                 PhraseQuery.handler(query)
             # wildcard query
             elif(int(number) == 3):
-                # GlobbingQuery.controller(query, btree, btree_rev,wordlist)
+                WildcardQuery.handler(query)
                 print('globbing')
             elif(int(number) == 4):
                 TermQuery.handler(query)
