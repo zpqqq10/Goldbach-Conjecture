@@ -1,7 +1,6 @@
 from math import sqrt
 import os
 import json
-from unittest import result
 from nltk import word_tokenize
 from nltk.stem import WordNetLemmatizer
 
@@ -47,25 +46,31 @@ def word_split(text):
     res = []
     result = []
     # 标点符号和数字
-    punc_digit = [',', '.', ';', ':', '&', '>', "'", '"', '`', '+', '(', ')', '[', ']', '{', '}', '-'
+    punc_digit = [',', '_', '.', ';', ':', '&', '>', "'", '"', '`', '+', '(', ')', '[', ']', '{', '}',
                   '*', '?', '!', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
-    for word in word_tokenize(text):
-        # 转换为小写
-        word = word.lower()
-        # 处理标点符号并忽略's
+    tokens = word_tokenize(text)
+    tokens = [token.lower() for token in tokens]
+    for word in tokens:
+        if word == "'s":
+            result[-1] += 's'
+            continue
+        # 处理标点符号
         for c in punc_digit:
-            if word != "'s": 
-                word = word.replace(c, '')
+            word = word.replace(c, '')
         # 处理空字符串
         if len(word) == 0:
             continue
-        # 处理 March/April 中的 / ：分成两个单词
-        if word.find('/') > 0:
+        if word.find('/') < 0 and word.find('-') < 0:
+            result.append(word)
+        # 处理/ - ：分成两个单词
+        else: 
             res = word.split('/')
             for w in res:
-                result.append(w)
-            continue
-        result.append(word)
+                r = w.split('-')
+                for t in r:
+                    if t != '': 
+                        result.append(t)
+        
     return result
 
 # 处理语料库文档的内容
@@ -162,6 +167,7 @@ def load_docsum(docID):
 
 # print filenames and the titles in terminal
 # output the content to *output*
+# doclist: [(docID, score), ...]
 def print_result(wordlist, doclist, mode):
     output = open('output', 'w')
     show = 0
@@ -250,29 +256,42 @@ def cos_dist(vec1, vec2):
     # result
     return qd / (q_2 * d_2)
 
+# load wordlist of a stem
+# return a list of word
+def load_wordlist(stem):
+    result = []
+    with open(os.path.join('jsons', 'Stem2Word.json'), 'r', encoding='utf-8') as f:
+        stems = json.load(f)
+        result = stems.get(stem, [])
+    return result
+
 if __name__ == '__main__':
 
     # print(load_cprs_doclist('bahia') == load_doclist('bahia'))
     # print(load_doclist_withp('bahia') == load_cprs_doclist_withp('bahia'))
     # print(load_docsum(5))
     # print(cos_dist(load_docvec(22), load_docvec(21521)))
-    token = word_split("26-FEB-1987 doctors government's dlrs tonne aug playing dentist's U.S.")
-    cnt = 0
-    ind = 0
-    for t in token:
-        if t == "'s":
-            token[ind-1] += 's'
-            cnt += 1
-        ind += 1
-    for i in range(cnt):
-        token.remove("'s")
-    print(token)
-    lem = []
-    lemmatizer = WordNetLemmatizer()
-    for t in token:
-        if t[-3:] == 'ing':
-            lem.append(lemmatizer.lemmatize(t, 'v'))
-        else:
-            lem.append(lemmatizer.lemmatize(t))
-    # token = [lemmatizer.lemmatize(t) for t in token]
-    print(lem)
+    
+    # token = word_split("26-FEB-1987 doctors government'S dlrs tonne aug playing dentist's U.S.")
+    # cnt = 0
+    # ind = 0
+    # print(token)
+    # for t in token:
+    #     if t == "'s":
+    #         token[token.index("'s")-1] += 's'
+    #         token.remove("'s")
+    #     # ind += 1
+    # # for i in range(cnt):
+    # #     token.remove("'s")
+    # print(token)
+    # lem = []
+    # lemmatizer = WordNetLemmatizer()
+    # for t in token:
+    #     if t[-3:] == 'ing':
+    #         lem.append(lemmatizer.lemmatize(t, 'v'))
+    #     else:
+    #         lem.append(lemmatizer.lemmatize(t))
+    # # token = [lemmatizer.lemmatize(t) for t in token]
+    # print(lem)
+    
+    process_doc_content('Reuters/20208.html')

@@ -2,13 +2,13 @@ import os
 from utils import *
 import math
 from tqdm import tqdm
+from nltk.stem import WordNetLemmatizer
 
 # 保留多少位小数
 RESERVEDBITS = 6
 # 文档的数量
 DOCS = 10788
 
-# TODO: _ - .
 def build_Iindex():
     # build inverted index
     index = {}      # inverted index list
@@ -66,7 +66,7 @@ def build_VSM(index, doc_sizes):
     # doc_sizes: size of each document
     print('Building VSM...')
     dictionary = [word for word in index.keys()]
-    VSM = {}
+    vsm = {}
     for docID in tqdm(doc_sizes.keys()):
         vector = {}
         # delta = 0
@@ -78,12 +78,12 @@ def build_VSM(index, doc_sizes):
                 idf = round(idf, RESERVEDBITS)
                 tf_idf = round(float(tf*idf), RESERVEDBITS)
                 vector[word] = (tf, idf, tf_idf)
-        VSM[docID] = vector
+        vsm[docID] = vector
     write_to_json(dictionary, os.path.join('jsons', 'Dictionary.json'))
     print(GREEN+'Dictionary is successfully built and saved!'+WHITE_)
-    write_to_json(VSM, os.path.join('jsons', 'VSM.json'))
+    write_to_json(vsm, os.path.join('jsons', 'VSM.json'))
     print(GREEN+'VSM is successfully built and saved!'+WHITE_)
-    return VSM
+    return vsm, dictionary
 
 # sum up the stat of a document, prepare for TopK
 def sumup_VSM(VSM):
@@ -105,6 +105,25 @@ def sumup_VSM(VSM):
 
     return sums
 
+def stemming(dictionary): 
+    stems = {}
+    lemmatizer = WordNetLemmatizer()
+    print('Stemming...')
+    for word in tqdm(dictionary):
+        s = ''
+        if word[-3:] == 'ing' or word[-2:] == 'ed':
+            # continuous tense or past tense
+            s = lemmatizer.lemmatize(word, 'v')
+        else:
+            s = lemmatizer.lemmatize(word)
+        if s in stems: 
+            # appeared stem
+            stems[s].append(word)
+        else :
+            stems[s] = [word]
+    write_to_json(stems, os.path.join('jsons', 'Stem2Word.json'))
+    print(GREEN+'Stem is successfully built and saved!'+WHITE_)
+    return stems
 
 if __name__ == '__main__':
     index, doc_sizes = build_Iindex()

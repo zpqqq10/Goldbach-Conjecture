@@ -2,6 +2,7 @@ import utils
 
 TOPK = 10
 
+
 def _TopK_sort(doclist):
     _doclist = {}
     print(doclist)
@@ -9,8 +10,9 @@ def _TopK_sort(doclist):
         _doclist[docID] = utils.load_docsum(docID)[2]
     return sorted(_doclist.items(), key=lambda i: i[1], reverse=True)
 
-
-def TopK_sort(doclist, k=TOPK):
+# doclist: [1, 44, 90, ...]
+# scored by VSMSum
+def TopK_sort(doclist, k = TOPK):
     vsm = utils.get_JSON('VSMSum')
     inputdata = []
     for docID in doclist:
@@ -39,7 +41,7 @@ class Heap():
         # data (score,doc id)
         self.heap = data
 
-    # let this heap a minheap with root n
+    # let this heap a maxheap with root n
     def shiftdown(self, i):
         n = self.size
         t = 0

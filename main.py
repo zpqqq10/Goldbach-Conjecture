@@ -46,17 +46,13 @@ def main():
             # wildcard query
             elif(int(number) == 3):
                 WildcardQuery.handler(query)
-                print('globbing')
+            # term query
             elif(int(number) == 4):
                 TermQuery.handler(query)
             # Correction
             elif(int(number) == 5):
                 print('Correcting ... ')
-                # print(SpellCorrection.spell_correct(query))
                 SpellCorrection.handler(query)
-            # merge
-            # if query.find('*')!=-1:
-                #GlobbingQuery.controller(query, btree, btree_rev, wordlist)
         except Exception as e:
             print(RED+repr(e)+WHITE_)
 
@@ -73,7 +69,8 @@ if __name__ == '__main__':
            not os.path.exists(os.path.join('jsons', 'CompressedInvertedIndex.json')) or \
            not os.path.exists(os.path.join('jsons', 'Dictionary.json')) or \
            not os.path.exists(os.path.join('jsons', 'VSMSum.json')) or \
-           not os.path.exists(os.path.join('jsons', 'VSM.json')):
+           not os.path.exists(os.path.join('jsons', 'VSM.json')) or \
+           not os.path.exists(os.path.join('jsons', 'Stem2Word.json')):
             if not os.path.exists('Reuters'):
                 if not os.path.exists('Reuters.rar'):
                     print('Downloading Reuters...')
@@ -86,7 +83,8 @@ if __name__ == '__main__':
                 z.close()
                 print(GREEN+'Extraction is successfully done!'+WHITE_)
             index, doc_sizes = InvertedIndex.build_Iindex()
-            VSM = InvertedIndex.build_VSM(index, doc_sizes)
-            InvertedIndex.sumup_VSM(VSM)
+            vsm, dictionary = InvertedIndex.build_VSM(index, doc_sizes)
+            InvertedIndex.sumup_VSM(vsm)
+            InvertedIndex.stemming(dictionary)
 
     main()
