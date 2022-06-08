@@ -1,18 +1,21 @@
-from torch import topk
-import re
 import BooleanQuery
 import utils
 import TopK
 #6.8 6a.m. 实现一个*的查询 今天上午会继续改，两个大程赶在一起了，拖大家后腿了实在对不起！
+# zpq:试了一下还跑不起来，加油
 #通配查询
 #使用通配符*代替字符
 def handler(query):
     wordlist = utils.word_split(query)
     btree, rev_btree = build_tree(wordlist)
-    result =WildcardQuery(query, btree, rev_btree, wordlist)
+    print(1)
+    result = WildcardQuery(query, btree, rev_btree, wordlist)
     # porecess result
+    print(result)
     result = TopK.TopK_sort(result)
+    print(3)
     utils.print_result(wordlist, result, 'Wildcard Query')
+    print(4)
     
 #Node    
 class Node(object):
@@ -25,14 +28,14 @@ class Node(object):
         
     #叶节点：没有子节点，均为None
     def is_leaf(self):
-        if(self.left is None and self.middle is None and self.right is None):
+        if self.left is None and self.middle is None and self.right is None:
             return True
         else:
             return False
 
     #key2有值
     def is_full(self):
-        if(self.key2 is not None):
+        if self.key2 is not None:
             return True
         else:
             return False
@@ -196,6 +199,7 @@ def build_tree(wordlist):
     rev_btree = Tree()
     #对于词bike:b-tree针对bik*型搜索，将wordlist倒转后建立的reverse b-tree针对*ike型搜索
     #对于普适的情况如bi*e，从两树中分别查找然后求交集
+    # ! 输入addr*，得到的wordlist是['addr', '*']
     for word in wordlist: 
         btree.all_get_key(word)
         rev_btree.all_get_key(word[::-1])
@@ -218,11 +222,11 @@ def next_word(word):
 #目前只支持一个*的查询
 def WildcardQuery(query, btree, rev_btree, wordlist):
     if query == '*':
+        # ! 这个return可能会有问题
         return wordlist
     count = query.count('*')
 
     if count == 1:
-        
         #bik*型情况:b-tree
         if query[len(query)-1] == '*':
             words_list = query.split('*')
