@@ -7,11 +7,12 @@ import TopK
 #通配查询
 #使用通配符*代替字符
 def handler(query):
-    word_list = utils.word_split(query)
-    result =wildcard_query(query, word_list)
+    wordlist = utils.word_split(query)
+    btree, rev_btree = build_tree(wordlist)
+    result =WildcardQuery(query, btree, rev_btree, wordlist)
     # porecess result
     result = TopK.TopK_sort(result)
-    utils.print_result(word_list, result, 'Wildcard Query')
+    utils.print_result(wordlist, result, 'Wildcard Query')
     
 #Node    
 class Node(object):
@@ -96,7 +97,14 @@ class Node(object):
 class Tree(object):
     def __init__(self):
         self.root = None
-        
+    
+    #遍历    
+    def all_check_key(self, key):
+        if self.root is None:
+            return None
+        else:
+            return self.check_key(self.root, key)
+
     #若node有key值则不变，若无key值则继承子节点key值
     def check_key(self, node, key):
         if node is None:
@@ -106,15 +114,38 @@ class Tree(object):
         else:
             child = node.get_child(key)
             return self.check_key(child, key)
-    
-    #遍历    
-    def all_check_key(self, key):
+            
+            
+    def all_get_key(self, key):
         if self.root is None:
-            return None
+            self.root = Node(key)
         else:
-            return self.check_key(self.root, key)
-
-               
+            pKey, pRef = self.get_key(self.root, key)
+            if pKey is not None:
+                newnode = Node(pKey)
+                newnode.left = self.root
+                newnode.middle = pRef
+                self.root = newnode
+            
+    def get_key(self, node, key):
+            if node.if_have_key(key):
+                return None, None
+            elif node.is_leaf():
+                return self.add_to_node(node, key, None)
+            else:
+                child = node.get_child(key)
+                pKey, pRef = self.get_key(child, key)
+                if pKey is None:
+                    return None, None
+                else:
+                    return self.add_to_node(node, pKey, pRef)
+                        
+    def find(self, key1, key2):
+        result = []
+        if self.root is not None:
+            result = (self.root.find_key(key1, key2))
+        return result
+              
     def split_node(self, node, key, pRef):
         newnode = Node(None)
         if key < node.key1:
@@ -141,7 +172,7 @@ class Tree(object):
         return pKey, newnode
     
     def add_to_node(self, node, key, pRef):
-        if node.isFull():
+        if node.is_full():
             return self.split_node(node, key, pRef)
         else:
             if key < node.key1:
@@ -156,35 +187,7 @@ class Tree(object):
                     node.right = pRef
             return None, None
              
-    def get_key(self, node, key):
-        if node.if_have_key(key):
-            return None, None
-        elif node.is_leaf():
-            return self.add_to_node(node, key, None)
-        else:
-            child = node.get_child(key)
-            pKey, pRef = self.get_key(child, key)
-            if pKey is None:
-                return None, None
-            else:
-                return self.add_to_node(node, pKey, pRef)
-            
-    def all_get_key(self, key):
-        if self.root is None:
-            self.root = Node(key)
-        else:
-            pKey, pRef = self.get_key(self.root, key)
-        if pKey is not None:
-            newnode = Node(pKey)
-            newnode.left = self.root
-            newnode.middle = pRef
-            self.root = newnode
-            
-    def find(self, key1, key2):
-        result = []
-        if self.root is not None:
-            result = (self.root.find_key(key1, key2))
-        return result
+
 
 def build_tree(wordlist):
     #print("start to build B-tree.\n")
@@ -213,7 +216,7 @@ def next_word(word):
 
 #通配查询
 #目前只支持一个*的查询
-def wildcard_query(query, btree, rev_btree, wordlist):
+def WildcardQuery(query, btree, rev_btree, wordlist):
     if query == '*':
         return wordlist
     count = query.count('*')
@@ -241,8 +244,8 @@ def wildcard_query(query, btree, rev_btree, wordlist):
          #bi*e型情况：b-tree and reverse b-tree
         else:
             words = query.split('*')
-            result1 = wildcard_query(words[0]+'*', btree, rev_btree, wordlist)
-            result2 = wildcard_query('*'+words[1],btree, rev_btree, wordlist)
+            result1 = WildcardQuery(words[0]+'*', btree, rev_btree, wordlist)
+            result2 = WildcardQuery('*'+words[1],btree, rev_btree, wordlist)
             result = []
             if result1 is None or result2 is None:
                 return None
@@ -254,5 +257,4 @@ def wildcard_query(query, btree, rev_btree, wordlist):
     else:
     #多个*的情况待补充
         return result
-
 
