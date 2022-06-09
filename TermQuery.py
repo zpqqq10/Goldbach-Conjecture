@@ -15,7 +15,7 @@ def handler(query):
             # many result
             for w in extendedlist:
                 doclist = build_or(doclist, utils.load_doclist(w))
-            doclist = TopK.TopK_sort(utils.load_doclist(origin))
+            doclist = TopK.TopK_sort(doclist)
         else:
             doclist = TopK.TopK_sort(utils.load_doclist(origin))
         # print(len(doclist))
