@@ -1,13 +1,18 @@
 import utils
 import nltk
 import TopK
-
+from BooleanQuery import build_or
 
 def handler(query):
     word_list = utils.word_split(query)
-    result = phrasequery(query, word_list)
-    # porecess result
-    result = [int(res) for res in result]
+    mat = utils.get_all_lists(word_list)
+    result = []
+    for wl in mat:
+        res = phrasequery(wl)
+        res = [int(r) for r in res]
+        result = build_or(result, res)
+    # proecess result
+    # result = [int(res) for res in result]
     result = TopK.TopK_sort(result)
     utils.print_result(word_list, result, 'Phrase Query')
 
@@ -16,7 +21,7 @@ def getinverted_index():
     inv = utils.get_JSON('InvertedIndex')
     return inv
 
-def phrasequery(query, word_list):
+def phrasequery(word_list):
     inverted = getinverted_index()
     words = [word for word in word_list if word in list(inverted.keys())]
 

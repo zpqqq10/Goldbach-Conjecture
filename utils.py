@@ -265,6 +265,41 @@ def load_wordlist(stem):
         result = stems.get(stem, [])
     return result
 
+# return all possible word lists
+def get_all_lists(wordlist):
+    extended = []
+    lemmatizer = WordNetLemmatizer()
+    for i in range(len(wordlist)): 
+        s = ''
+        if wordlist[i][-3:] == 'ing' or wordlist[i][-2:] == 'ed':
+                # continuous tense or past tense
+            s = lemmatizer.lemmatize(wordlist[i], 'v')
+        else:
+            s = lemmatizer.lemmatize(wordlist[i])
+        l = load_wordlist(lemmatizer.lemmatize(s))
+        if l != []: 
+            extended.append(l)
+    mat = recurse([], extended, 0, len(extended))
+    # print(mat)
+    return mat
+
+def recurse(mat, extended, level, depth): 
+    if level == depth - 1: 
+        l = mat.pop()
+        for w in extended[level]: 
+            mat.append(l + [w])
+    elif level == 0:
+        for w in extended[level]:
+            mat.append([w])
+            mat = recurse(mat, extended, level + 1, depth)
+    else: 
+        l = mat.pop()
+        for w in extended[level]: 
+            mat.append(l + [w])
+            mat = recurse(mat, extended, level + 1, depth)
+    return mat
+        
+
 if __name__ == '__main__':
 
     # print(load_cprs_doclist('bahia') == load_doclist('bahia'))
@@ -294,4 +329,5 @@ if __name__ == '__main__':
     # # token = [lemmatizer.lemmatize(t) for t in token]
     # print(lem)
     
-    process_doc_content('Reuters/20208.html')
+    # process_doc_content('Reuters/20208.html')
+    print(get_all_lists(['technology']))
