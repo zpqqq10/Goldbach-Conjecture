@@ -284,7 +284,10 @@ def get_all_lists(wordlist):
     return mat
 
 def recurse(mat, extended, level, depth): 
-    if level == depth - 1: 
+    if depth == 1:
+        for w in extended[level]: 
+            mat.append([w])
+    elif level == depth - 1: 
         l = mat.pop()
         for w in extended[level]: 
             mat.append(l + [w])
@@ -330,4 +333,4 @@ if __name__ == '__main__':
     # print(lem)
     
     # process_doc_content('Reuters/20208.html')
-    print(get_all_lists(['technology']))
+    print(get_all_lists(['technology', 'vying', 'education']))
