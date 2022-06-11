@@ -107,15 +107,9 @@ def sumup_VSM(VSM):
 
 def stemming(dictionary): 
     stems = {}
-    lemmatizer = WordNetLemmatizer()
     print('Stemming...')
     for word in tqdm(dictionary):
-        s = ''
-        if word[-3:] == 'ing' or word[-2:] == 'ed':
-            # continuous tense or past tense
-            s = lemmatizer.lemmatize(word, 'v')
-        else:
-            s = lemmatizer.lemmatize(word)
+        s = get_stem(word)
         if s in stems: 
             # appeared stem
             stems[s].append(word)

@@ -265,18 +265,22 @@ def load_wordlist(stem):
         result = stems.get(stem, [])
     return result
 
+def get_stem(word): 
+    lemmatizer = WordNetLemmatizer()
+    s = ''
+    if word[-3:] == 'ing' or word[-2:] == 'ed':
+            # continuous tense or past tense
+        s = lemmatizer.lemmatize(word, 'v')
+    else:
+        s = lemmatizer.lemmatize(word)
+    return s
+
 # return all possible word lists
 def get_all_lists(wordlist):
     extended = []
-    lemmatizer = WordNetLemmatizer()
     for i in range(len(wordlist)): 
-        s = ''
-        if wordlist[i][-3:] == 'ing' or wordlist[i][-2:] == 'ed':
-                # continuous tense or past tense
-            s = lemmatizer.lemmatize(wordlist[i], 'v')
-        else:
-            s = lemmatizer.lemmatize(wordlist[i])
-        l = load_wordlist(lemmatizer.lemmatize(s))
+        s = get_stem(wordlist[i])
+        l = load_wordlist(s)
         if l != []: 
             extended.append(l)
     mat = recurse([], extended, 0, len(extended))

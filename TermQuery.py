@@ -9,7 +9,7 @@ def handler(query):
         # only one word
         origin = wordlist[0]
         lemmatizer = WordNetLemmatizer()
-        extendedlist = utils.load_wordlist(lemmatizer.lemmatize(origin))
+        extendedlist = utils.load_wordlist(utils.get_stem(origin))
         doclist = []    # to print
         if extendedlist or len(extendedlist) > 1:
             # many result
