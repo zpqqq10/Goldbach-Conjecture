@@ -11,6 +11,7 @@ import SpellCorrection
 import TermQuery
 import PhraseQuery
 import WildcardQuery
+import SynonmyQuery
 # sudo apt install unrar
 
 
@@ -19,9 +20,10 @@ prompt = '''Please select the query mode:
     {}2{}.Phrase Query
     {}3{}.Wildcard Query
     {}4{}.Term Query
-    {}5{}.Spell Correction
+    {}5{}.Synonmy Query
+    {}6{}.Spell Correction
     {}0{}.quit
-> '''.format(BLUE, WHITE_, BLUE, WHITE_, BLUE, WHITE_, BLUE, WHITE_, BLUE, WHITE_, BLUE, WHITE_)
+> '''.format(BLUE, WHITE_, BLUE, WHITE_, BLUE, WHITE_, BLUE, WHITE_, BLUE, WHITE_, BLUE, WHITE_, BLUE, WHITE_)
 # main function, a loop
 
 
@@ -33,7 +35,7 @@ def main():
         try:
             if int(number) == 0:
                 break
-            elif int(number) > 5 or int(number) < 0:
+            elif int(number) > 6 or int(number) < 0:
                 print('ERROR: WRONG INPUT!')
                 continue
             query = input('Input your query:\n> ')
@@ -49,8 +51,11 @@ def main():
             # term query
             elif(int(number) == 4):
                 TermQuery.handler(query)
-            # Correction
+            # synonmy query 
             elif(int(number) == 5):
+                SynonmyQuery.handler(query)
+            # Correction
+            elif(int(number) == 6):
                 print('Correcting ... ')
                 SpellCorrection.handler(query)
         except Exception as e:
