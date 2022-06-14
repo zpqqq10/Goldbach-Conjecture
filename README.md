@@ -2,35 +2,6 @@
 ## IR project
 A simple search engine for class Information Retrieval, developed by zpq, kyq, wzq and zjc. 
 
-## Group members & works: 
-* zpq
-  *  程序入口
-  *  倒排索引+VSM
-  *  索引压缩
-  *  词条查询
-* kyq
-  * 布尔查询
-  * 拼写矫正
-* wzq
-  * 通配查询
-* zjc
-  * 短语查询
-  * 同义词
-  * TopK
-
-Work: 
-- [x] 倒排索引
-- [x] VSM
-- [x] 索引压缩
-- [x] 布尔查询
-- [x] 通配查询
-- [x] 短语查询
-- [x] 拼写矫正
-- [x] 词典索引
-- [x] 同义词
-- [x] TopK
-- [x] 词条查询 （基于余弦相似度）
-
 ## Environment 
 * **Linux**
 * **Python**
@@ -85,5 +56,4 @@ Work:
 * 词条查询
   * 实现基于余弦相似度排序的词条查询
   * 只有一个词时，会返回词干能衍生出的所有词的结果
-    * 暂未在别的查询下实现，对性能影响大
   * 多个词时，计算余弦相似度
