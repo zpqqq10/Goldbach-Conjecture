@@ -1,21 +1,33 @@
 import BooleanQuery
 import utils
 import TopK
-#6.8 6a.m. 实现一个*的查询 今天上午会继续改，两个大程赶在一起了，拖大家后腿了实在对不起！
-# zpq:试了一下还跑不起来，加油
+
 #通配查询
 #使用通配符*代替字符
 def handler(query):
-    wordlist = utils.word_split(query)
-    btree, rev_btree = build_tree(wordlist)
-    print(1)
-    result = WildcardQuery(query, btree, rev_btree, wordlist)
-    # porecess result
-    print(result)
-    result = TopK.TopK_sort(result)
-    print(3)
-    utils.print_result(wordlist, result, 'Wildcard Query')
-    print(4)
+    dictionary = utils.get_JSON('Dictionary')
+    btree, rev_btree = build_tree(dictionary)
+    #word_result：符合通配查询输入query的词表
+    word_result = WildcardQuery(query, btree, rev_btree, dictionary)
+    if len(word_result) == 0:
+        print("There's no word that meet the query.")
+    else:
+        print("We list the words you may want to search as follows:")   
+        print(word_result)
+        print("And here are the doc ID of all search result:")
+        #doc_result_list存放word_result中word查询得到的对应文档  
+        doc_result_list = []
+        for word in word_result:
+            docID = utils.load_doclist(word)
+            doc_result_list.append(docID)
+            doc_result = doc_result_list[0]
+        #调用布尔查询中的or操作得到全部结果
+        for i in range(1,len(doc_result_list)):
+            doc_result = BooleanQuery.build_or(doc_result,doc_result_list[i])
+        # porecess result
+        print(doc_result)
+        doc_result = TopK.TopK_sort(doc_result)
+        utils.print_result(word_result, doc_result, 'Wildcard Query')
     
 #Node    
 class Node(object):
@@ -191,21 +203,17 @@ class Tree(object):
             return None, None
              
 
-
 def build_tree(wordlist):
-    #print("start to build B-tree.\n")
+    print("start to build B-tree.\n")
     #初始化建树
     btree = Tree()
     rev_btree = Tree()
     #对于词bike:b-tree针对bik*型搜索，将wordlist倒转后建立的reverse b-tree针对*ike型搜索
     #对于普适的情况如bi*e，从两树中分别查找然后求交集
-    # ! 输入addr*，得到的wordlist是['addr', '*']
     for word in wordlist: 
         btree.all_get_key(word)
         rev_btree.all_get_key(word[::-1])
-    #print(btree.root.key1)
-    #print(rev_btree.root.key1)
-    #print("success for building B-tree！")
+    print("success for building B-tree！")
     return btree, rev_btree
 
 def next_word(word):
@@ -218,14 +226,13 @@ def next_word(word):
         word = next_word(newword)+word[len(word)-1]
     return word
 
-#通配查询
-#目前只支持一个*的查询
+#通配查询:从词典中查出所有符合query的词
 def WildcardQuery(query, btree, rev_btree, wordlist):
     if query == '*':
-        # ! 这个return可能会有问题
         return wordlist
     count = query.count('*')
 
+    #只有一个通配符*
     if count == 1:
         #bik*型情况:b-tree
         if query[len(query)-1] == '*':
@@ -258,7 +265,34 @@ def WildcardQuery(query, btree, rev_btree, wordlist):
                     result.append(word)
             return result
         
+    #一个查询中出现多个*    
     else:
-    #多个*的情况待补充
+        #判断query首、尾字符的情况，来决定将query拆成几部分
+        if query[0]!='*' and query[len(query)-1]!='*':
+            query_part = query.split('*')
+            new_query = query_part[0]+'*'+query_part[len(query_part)-1]
+        elif query[0]!='*':
+            query_part = query.split('*')
+            new_query = query_part[0]+'*'
+        elif query[len(query)-1]!='*':
+            query_part = query.split('*')
+            new_query = '*'+query_part[len(query_part)-1]
+        else:
+            query_part = query.split('*')
+            new_query = '*'
+        #print(new_query)
+        result = WildcardQuery(new_query, btree, rev_btree, wordlist)
+        j = 0
+        
+        while True:
+            if j>=len(result):
+                break
+            word = result[j]
+            for i in range(1, len(query_part)-1):
+                if word.find(query_part[i]) == -1:
+                    result.remove(word)
+                    j -= 1
+                    break
+            j += 1
         return result
 
