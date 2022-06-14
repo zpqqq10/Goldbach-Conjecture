@@ -1,17 +1,8 @@
 # Goldbach-Conjecture
 ## IR project
+A simple search engine for class Information Retrieval, developed by zpq, kyq, wzq and zjc. 
 
-## 注意：统一一点规范
-* 多写点注释
-* python文件名采用每个词首字母大写，无下划线的形式
-* 函数名用下划线_分割单词
-* 每个模块的最顶级函数取名为`handler()`，可以直接在`main.py`中调用`xxx.handler(query)`（参考目前完成的布尔检索模块）
-* 如果还没下载语料库的，直接跑`main.py`即可自动下载解压（在校网下），途中可能会提示一些包没安装，根据报错安装一下（其中*rarfile*用`sudo apt install unrar`，别的用pip）
-* 建议字符串用单引号括
-* `utils.py`里面有一些编写模块时需要用到的函数，名字与往年其他人作业的可能不同
-
-
-Group members & works: 
+## Group members & works: 
 * zpq
   *  程序入口
   *  倒排索引+VSM
@@ -32,7 +23,7 @@ Work:
 - [x] VSM
 - [x] 索引压缩
 - [x] 布尔查询
-- [ ] 通配查询
+- [x] 通配查询
 - [x] 短语查询
 - [x] 拼写矫正
 - [x] 词典索引
@@ -40,33 +31,16 @@ Work:
 - [x] TopK
 - [x] 词条查询 （基于余弦相似度）
 
-Environment: 
+## Environment 
 * **Linux**
 * **Python**
+* 从 http://www.nltk.org/nltk_data/ 下载缺少的包，把解压后的文件夹放到`~/nltk_data`（这个目录可能得手动新建，注意报错中黄色字的路径）
+* 现在需要安装的有：
+  * `tokenizers/pubkt`
+  * `corpora/omw-1.4`
+  * `corpora/wordnet`
+* `sudo apt install unrar`
 
-Packages: 
-* nltk?
-* chardet?
-
-TODO：
-* kyq：
-  * 改进布尔检索（选做，看了下感觉还是不做算了，要改好多东西）
-* zjc：
-  * 使用nltk的wordnet实现同义词查询
-* wzq：
-  * 继续完善通配查询
-  * 根据提交要求，写说明文档，完成后发给zpq
-* 所有人：
-  * 在自己实现的查询中加入词干扩展的功能，首先对查询词进行lemmatize，再查Stem2Word.json得到候选词，对候选词的组合进行多次查询，对查询结果进行`build_or`（可以参考TermQuery.py的8-23行，选做，不懂的问zpq）
-  * 看了下，布尔查询加需要大改，短语查询已加，通配查询应该可以加？词条查询已加，拼写矫正没法加
-* 在自己电脑上把`main.py`跑起来，如果nltk提示找不到包，百度一下解决这个问题，大概流程就是去网站上下载包，然后把包放到报错的目录下（nltk找不到包的报错是寻找了以下哪些哪些路径，没有找到包），我晚上找一找我看得链接放上来
-  * 从 http://www.nltk.org/nltk_data/ 下载缺少的包，把解压后的文件夹放到`~/nltk_data`（这个目录可能得手动新建，注意报错中黄色字的路径）
-  * 现在需要安装的有：
-    * `tokenizers/pubkt`
-    * `corpora/omw-1.4`
-    * `corpora/wordnet`
-
-# 咱们尽量在考试周之前解决这个大作业！辛苦大家！
 # SUMMARY
 * 运行
   * 确认所有包安装完毕后直接运行main即可

@@ -11,7 +11,7 @@ def handler(query):
     result = build_or(result, res)
     result = TopK.TopK_sort(result)
 
-    print("Its synonyms are below:")
+    print("Words you may want to use:") 
     print(syn)
 
     utils.print_result(syn,result,"Synonym Query")

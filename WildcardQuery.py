@@ -12,9 +12,8 @@ def handler(query):
     if len(word_result) == 0:
         print("There's no word that meet the query.")
     else:
-        print("We list the words you may want to search as follows:")   
+        print("Words you may want to use:")   
         print(word_result)
-        print("And here are the doc ID of all search result:")
         #doc_result_list存放word_result中word查询得到的对应文档  
         doc_result_list = []
         for word in word_result:
@@ -24,8 +23,7 @@ def handler(query):
         #调用布尔查询中的or操作得到全部结果
         for i in range(1,len(doc_result_list)):
             doc_result = BooleanQuery.build_or(doc_result,doc_result_list[i])
-        # porecess result
-        print(doc_result)
+        # proecess result
         doc_result = TopK.TopK_sort(doc_result)
         utils.print_result(word_result, doc_result, 'Wildcard Query')
     
@@ -204,7 +202,6 @@ class Tree(object):
              
 
 def build_tree(wordlist):
-    print("start to build B-tree.\n")
     #初始化建树
     btree = Tree()
     rev_btree = Tree()
@@ -213,7 +210,6 @@ def build_tree(wordlist):
     for word in wordlist: 
         btree.all_get_key(word)
         rev_btree.all_get_key(word[::-1])
-    print("success for building B-tree！")
     return btree, rev_btree
 
 def next_word(word):

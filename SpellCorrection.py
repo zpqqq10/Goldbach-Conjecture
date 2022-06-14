@@ -3,7 +3,7 @@ import utils
 
 def handler(query): 
     wordlist = query.split(' ')
-    print(wordlist)
+    # print(wordlist)
     for word in wordlist:
         print(spell_correct(word), end=' ')
     print()
